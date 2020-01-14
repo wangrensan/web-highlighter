@@ -54,12 +54,15 @@ export default class Highlighter extends EventEmitter {
             return null;
         }
         this.cache.save(source);
+        console.log('高亮啦', source)
         this.emit(EventType.CREATE, {sources: [source], type: 'from-input'}, this);
         return source;
     }
 
+    // 从数据库中获取数据后，调用该函数进行绘制
     private _highlighFromHSource(sources: HighlightSource[] | HighlightSource = []) {
         const renderedSources: Array<HighlightSource> = this.painter.highlightSource(sources);;
+        console.log('高亮了，准备回调', renderedSources)
         this.emit(EventType.CREATE, {sources: renderedSources, type: 'from-store'}, this);
         this.cache.save(sources);
     }
@@ -131,7 +134,7 @@ export default class Highlighter extends EventEmitter {
         }, this.hooks);
     }
 
-    fromRange = (range: Range): HighlightSource => {
+    fromRange = (range: Range, className: string): HighlightSource => {
         const start: DomNode = {
             $node: range.startContainer,
             offset: range.startOffset
@@ -144,7 +147,7 @@ export default class Highlighter extends EventEmitter {
         const text = range.toString();
         let id = this.hooks.Render.UUID.call(start, end, text);
         id = id !== undefined && id !== null ? id : uuid();
-        const hRange = new HighlightRange(start, end, text, id);
+        const hRange = new HighlightRange(start, end, text, id, false, className);
         if (!hRange) {
             console.warn(ERROR.RANGE_INVALID);
             return null;
@@ -152,9 +155,10 @@ export default class Highlighter extends EventEmitter {
         return this._highlighFromHRange(hRange);
     }
 
-    fromStore = (start: DomMeta, end: DomMeta, text, id): HighlightSource => {
+    fromStore = (start: DomMeta, end: DomMeta, text, id, className): HighlightSource => {
+        console.log('仓库来的数据', start, end, text, id, className)
         try {
-            const hs = new HighlightSource(start, end, text, id);
+            const hs = new HighlightSource(start, end, text, id, className, undefined);
             this._highlighFromHSource(hs);
             return hs;
         }

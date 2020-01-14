@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>aaa</div>
+  <div>bbb</div>
+  <div>111</div>
+  <script src="./dist/web-highlighter.min.js"></script>
+  <script>
+    let s = { "startMeta": { "parentTagName": "DIV", "parentIndex": 1, "textOffset": 1 }, "endMeta": { "parentTagName": "DIV", "parentIndex": 2, "textOffset": 2 }, "text": "bb\n  11", "id": "60fa22d6-227b-4d8b-acf2-d44610ad2b72", "className": "highlight-mengshou-wrap", "__isHighlightSource": {} }
+    // const dataList = [data]
+    const highlighter = new Highlighter()
+
+    highlighter.fromStore(s.startMeta, s.endMeta, s.id, s.text, s.className)
+
+    document.addEventListener('mouseup', () => {
+      const selection = window.getSelection()
+      highlighter.on(Highlighter.event.CREATE, ({ sources }) => {
+        console.log('添加后的回调', sources)
+      })
+      highlighter.fromRange(selection.getRangeAt(0), 'highlight-mengshou-wrap')
+      // 自定义的高亮颜色className
+      // highlighter.fromRange(selection.getRangeAt(0), 'wrs--blue')
+    })
+  </script>
+</body>
+
+</html>

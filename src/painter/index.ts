@@ -40,7 +40,6 @@ export default class Painter {
         if (!range.frozen) {
             throw ERROR.HIGHLIGHT_RANGE_FROZEN;
         }
-
         const {$root, className, exceptSelectors} = this.options;
         const hooks = this.hooks;
 
@@ -50,7 +49,8 @@ export default class Painter {
         }
 
         return $selectedNodes.map(n => {
-            let $node = wrapHighlight(n, range, className);
+            // 把固定的className改成自定义的
+            let $node = wrapHighlight(n, range, range.className || className);
             if (!hooks.Render.WrapNode.isEmpty()) {
                 $node = hooks.Render.WrapNode.call(range.id, $node);
             }

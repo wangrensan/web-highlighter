@@ -17,6 +17,7 @@ class HighlightRange {
     text: string;
     id: string;
     frozen: boolean;
+    className: string;
 
     static removeDomRange = removeSelection;
 
@@ -39,7 +40,8 @@ class HighlightRange {
         let id = idHook.call(start, end, text);
         id = id !== undefined && id !== null ? id : uuid();
 
-        return new HighlightRange(start, end, text, id);
+        // TODO className先暂定设置为空，不知道是否准确
+        return new HighlightRange(start, end, text, id, false, '');
     }
 
     constructor(
@@ -47,7 +49,8 @@ class HighlightRange {
         end: DomNode,
         text: string,
         id: string,
-        frozen: boolean = false
+        frozen: boolean = false,
+        className: string,
     ) {
         if (start.$node.nodeType !== 3 || end.$node.nodeType !== 3) {
             console.warn(ERROR.RANGE_NODE_INVALID);
@@ -58,10 +61,12 @@ class HighlightRange {
         this.text = text;
         this.frozen = frozen;
         this.id = id;
+        this.className = className;
     }
 
     // serialize the HRange instance
     // so that you can save the returned object (e.g. use JSON.stringify on it and send to backend)
+    // 开始序列化元素，标记拖蓝的信息
     serialize($root: HTMLElement | Document, hooks: HookMap): HighlightSource {
         const startMeta = getDomMeta(this.start.$node as Text, this.start.offset, $root);
         const endMeta = getDomMeta(this.end.$node as Text, this.end.offset, $root);
@@ -72,7 +77,7 @@ class HighlightRange {
         }
 
         this.frozen = true;
-        return new HighlightSource(startMeta, endMeta, this.text, this.id, extra);
+        return new HighlightSource(startMeta, endMeta, this.text, this.id, this.className, extra);
     }
 }
 

@@ -13,6 +13,7 @@ class HighlightSource {
     endMeta: DomMeta;
     text: string;
     id: string;
+    className: string;
     extra?: any;
     __isHighlightSource: any;
 
@@ -21,12 +22,14 @@ class HighlightSource {
         endMeta: DomMeta,
         text: string,
         id: string,
-        extra?: any
+        className: string,
+        extra?: any,
     ) {
         this.startMeta = startMeta;
         this.endMeta = endMeta;
         this.text = text;
         this.id = id;
+        this.className = className;
         this.__isHighlightSource = {};
         if (extra) {
             this.extra = extra;
@@ -43,7 +46,8 @@ class HighlightSource {
             endInfo,
             this.text,
             this.id,
-            true
+            true,
+            this.className
         );
         return range;
     }
